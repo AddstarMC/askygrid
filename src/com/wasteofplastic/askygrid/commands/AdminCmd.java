@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.wasteofplastic.askygrid.commands;
 
@@ -45,7 +45,8 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
  */
 public class AdminCmd implements CommandExecutor, TabCompleter {
     private ASkyGrid plugin;
-
+    
+    @SuppressWarnings("unused")
     public AdminCmd(ASkyGrid plugin) {
 	this.plugin = plugin;
     }
@@ -242,10 +243,10 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	}
     }
 
-    /**
-     * Shows info on a player
-     * 
-     * @param playerUUID
+    /*
+      Shows info on a player
+      
+      @param playerUUID
      * @param sender
      */
     /*
@@ -300,10 +301,7 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	String check = split[0];
 	if (check.equalsIgnoreCase("confirm"))
 	    check = "purge";
-	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "admin." + check.toLowerCase())) {
-	    return true;
-	}
-	return false;
+        return VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "admin." + check.toLowerCase());
     }
 
     private boolean checkModPerms(Player player2, String[] split) {
@@ -316,15 +314,12 @@ public class AdminCmd implements CommandExecutor, TabCompleter {
 	if (check.contains("challenge".toLowerCase())) {
 	    check = "challenges";
 	}
-	if (VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "mod." + check.toLowerCase())) {
-	    return true;
-	}
-	return false;
+        return VaultHelper.checkPerm(player2, Settings.PERMPREFIX + "mod." + check.toLowerCase());
     }
 
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
-	final List<String> options = new ArrayList<String>();
+        final List<String> options = new ArrayList<>();
 	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
 
 	if (!(sender instanceof Player)) {

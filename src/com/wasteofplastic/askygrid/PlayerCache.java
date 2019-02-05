@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid;
 
 import java.io.File;
@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
  * @author tastybento
  */
 public class PlayerCache {
-    private HashMap<UUID, Players> playerCache = new HashMap<UUID, Players>();
+    private HashMap<UUID, Players> playerCache = new HashMap<>();
     private final ASkyGrid plugin;
 
     public PlayerCache(ASkyGrid plugin) {
@@ -91,10 +91,10 @@ public class PlayerCache {
     /*
      * Player info query methods
      */
-    /**
-     * Returns location of player's island from cache if available
-     * 
-     * @param playerUUID
+    /*
+      Returns location of player's island from cache if available
+      
+      @param playerUUID
      * @return Location of player's island
      */
     /*

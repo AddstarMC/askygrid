@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid.listeners;
 
 import java.util.ArrayList;
@@ -50,13 +50,13 @@ public class PlayerEvents implements Listener {
     private final ASkyGrid plugin;
     private final static boolean DEBUG = false;
     // A set of falling players
-    private static HashSet<UUID> fallingPlayers = new HashSet<UUID>();
+    private static HashSet<UUID> fallingPlayers = new HashSet<>();
     private List<UUID> respawn;
     //private boolean spawnEggMeta = false;
 
     public PlayerEvents(final ASkyGrid plugin) {
 	this.plugin = plugin;
-	respawn = new ArrayList<UUID>();
+        respawn = new ArrayList<>();
 	// Work out if SpawnEgg method is available
 	/*
 	if (getMethod("SpawnEggMeta", ItemMeta.class) != null) {
@@ -309,9 +309,9 @@ public class PlayerEvents implements Listener {
     }
 
 
-    /**
-     * Removes invalid spawn eggs
-     * @param e
+    /*
+      Removes invalid spawn eggs
+      @param e
      */
     /*
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = false)
@@ -369,9 +369,6 @@ public class PlayerEvents implements Listener {
 	if (Settings.createNether && world.equals(ASkyGrid.getNetherWorld())) {
 	    return true;
 	}
-	if (Settings.createEnd && world.equals(ASkyGrid.getEndWorld())) {
-	    return true;
-	}
-	return false;
+        return Settings.createEnd && world.equals(ASkyGrid.getEndWorld());
     }
 }

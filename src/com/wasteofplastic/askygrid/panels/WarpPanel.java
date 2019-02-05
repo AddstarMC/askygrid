@@ -32,7 +32,7 @@ public class WarpPanel implements Listener {
      */
     public WarpPanel(ASkyGrid plugin) {
 	this.plugin = plugin;
-	warpPanel = new ArrayList<Inventory>();
+		warpPanel = new ArrayList<>();
 	updatePanel();
     }
 
@@ -49,7 +49,7 @@ public class WarpPanel implements Listener {
 	int remainder = (warps.size() % (panelSize-2)) + 8 + 2;
 	remainder -= (remainder % 9);
 	//plugin.getLogger().info("DEBUG: panel number = " + panelNumber + " remainder = " + remainder);
-	int i = 0;
+		int i;
 	// TODO: Make panel title a string
 	for (i = 0; i < panelNumber; i++) {
 	    //plugin.getLogger().info("DEBUG: created panel " + (i+1));
@@ -67,14 +67,15 @@ public class WarpPanel implements Listener {
 	    // Make a head if the player is known
 	    String playerName = plugin.getServer().getOfflinePlayer(playerUUID).getName();
 	    if (playerName != null) {
-		ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+			ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD, 1);
+		
 		SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-		meta.setOwner(playerName);
+			meta.setOwningPlayer(plugin.getServer().getOfflinePlayer(playerUUID));
 		meta.setDisplayName(playerName);
 		//get the sign info
 		Location signLocation = plugin.getWarpSignsListener().getWarp(playerUUID);
 		//plugin.getLogger().info("DEBUG: " + playerName + ": block type = " + signLocation.getBlock().getType());
-		if (signLocation.getBlock().getType().equals(Material.SIGN_POST) || signLocation.getBlock().getType().equals(Material.WALL_SIGN)) {
+			if (signLocation.getBlock().getType().equals(Material.SIGN) || signLocation.getBlock().getType().equals(Material.WALL_SIGN)) {
 		    Sign sign = (Sign)signLocation.getBlock().getState();
 		    List<String> lines = Arrays.asList(sign.getLines());
 		    meta.setLore(lines);
@@ -99,7 +100,7 @@ public class WarpPanel implements Listener {
 		// Just make a blank space
 		//warpPanel.get(panelNumber).setItem(slot, new ItemStack(Material.AIR));
 		// TEST CODE
-		ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+			ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD, 1);
 		SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
 		meta.setDisplayName("#" + count);
 		playerSkull.setItemMeta(meta);
@@ -153,7 +154,7 @@ public class WarpPanel implements Listener {
 	if (event.getRawSlot() >= event.getInventory().getSize() || clicked.getType() == Material.AIR) {
 	    return;
 	}
-	int panelNumber = 0;
+		int panelNumber;
 	try {
 	    panelNumber = Integer.valueOf(title.substring(title.indexOf('#')+ 1));
 	} catch (Exception e) {

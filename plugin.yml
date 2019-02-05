@@ -1,6 +1,7 @@
 name: ASkyGrid
 main: com.wasteofplastic.askygrid.ASkyGrid
 version: ${version}
+api-version: legacy
 description: A SkyGrid Plugin
 author: tastybento
 depend: [Vault]

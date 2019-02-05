@@ -21,8 +21,8 @@ public enum Biomes {
     DESERT(Biome.DESERT, 60, 4),
     FOREST(Biome.FOREST, 50, 60),
     PLAINS(Biome.PLAINS, 40, 30),
-    SWAMP(Biome.SWAMPLAND, 40, 70),
-    EXTREME_HILLS(Biome.EXTREME_HILLS, 30, 10),
+	SWAMP(Biome.SWAMP, 40, 70),
+	EXTREME_HILLS(Biome.GRAVELLY_MOUNTAINS, 30, 10),
     JUNGLE(Biome.JUNGLE, 60, 50),
     SAVANNA(Biome.SAVANNA, 60, 10),
     DESERT_HILLS(Biome.DESERT_HILLS, 60, 5),
@@ -30,8 +30,8 @@ public enum Biomes {
     
     public final Biome biome;
     public final double optimumTemperature, optimumRainfall;
-
-    private Biomes(Biome biome, double temp, double rain) {
+	
+	Biomes(Biome biome, double temp, double rain) {
 	this.biome = biome;
 	this.optimumTemperature = temp;
 	this.optimumRainfall = rain;
@@ -44,7 +44,7 @@ public enum Biomes {
      */
     public static HashMap<Biomes, Double> getBiomes(double temp, double rain) {
 	//We tell it the capacity we need to avoid expensive dynamic lengthening
-	HashMap<Biomes, Double> biomes = new HashMap<Biomes, Double>(3);
+		HashMap<Biomes, Double> biomes = new HashMap<>(3);
 
 	Biomes closestBiome = null, secondClosestBiome = null, thirdClosestBiome = null;
 	double closestDist = 10000000, secondClosestDist = 10000000, thirdClosestDist = 10000000;

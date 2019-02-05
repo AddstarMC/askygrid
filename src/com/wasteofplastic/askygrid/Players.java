@@ -1,23 +1,22 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -50,9 +49,9 @@ public class Players {
     public Players(final ASkyGrid aSkyBlock, final UUID uuid) {
 	this.plugin = aSkyBlock;
 	this.uuid = uuid;
-	this.homeLocations = new HashMap<Integer,Location>();
-	this.challengeList = new HashMap<String, Boolean>();
-	this.challengeListTimes = new HashMap<String, Integer>();
+        this.homeLocations = new HashMap<>();
+        this.challengeList = new HashMap<>();
+        this.challengeListTimes = new HashMap<>();
 	this.playerName = "";
 	this.locale = "";
 	load(uuid);
@@ -145,27 +144,25 @@ public class Players {
     public void updateChallengeList() {
 	// If it does not exist, then make it
 	if (challengeList == null) {
-	    challengeList = new HashMap<String, Boolean>();
+        challengeList = new HashMap<>();
 	}
 	// Iterate through all the challenges in the config.yml and if they are
 	// not in the list the add them as yet to be done
-	final Iterator<?> itr = Settings.challengeList.iterator();
-	while (itr.hasNext()) {
-	    final String current = (String) itr.next();
-	    if (!challengeList.containsKey(current.toLowerCase())) {
-		challengeList.put(current.toLowerCase(), Boolean.valueOf(false));
-	    }
-	}
+        for (String current : Settings.challengeList) {
+            if (!challengeList.containsKey(current.toLowerCase())) {
+                challengeList.put(current.toLowerCase(), Boolean.FALSE);
+            }
+        }
 	// If the challenge list is bigger than the number of challenges in the
 	// config.yml (some were removed?)
 	// then remove the old ones - the ones that are no longer in Settings
 	if (challengeList.size() > Settings.challengeList.size()) {
 	    final Object[] challengeArray = challengeList.keySet().toArray();
-	    for (int i = 0; i < challengeArray.length; i++) {
-		if (!Settings.challengeList.contains(challengeArray[i].toString())) {
-		    challengeList.remove(challengeArray[i].toString());
-		}
-	    }
+        for (Object o : challengeArray) {
+            if (!Settings.challengeList.contains(o.toString())) {
+                challengeList.remove(o.toString());
+            }
+        }
 	}
     }
 
@@ -177,14 +174,11 @@ public class Players {
      *         otherwise false
      */
     public boolean challengeExists(final String challenge) {
-	if (challengeList.containsKey(challenge.toLowerCase())) {
-	    return true;
-	}
+        return challengeList.containsKey(challenge.toLowerCase());
 	// for (String s : challengeList.keySet()) {
 	// ASkyGrid.getInstance().getLogger().info("DEBUG: challenge list: " +
 	// s);
 	// }
-	return false;
     }
 
     /**
@@ -198,7 +192,7 @@ public class Players {
 	if (challengeList.containsKey(challenge.toLowerCase())) {
 	    // plugin.getLogger().info("DEBUG: " + challenge + ":" +
 	    // challengeList.get(challenge.toLowerCase()).booleanValue() );
-	    return challengeList.get(challenge.toLowerCase()).booleanValue();
+        return challengeList.get(challenge.toLowerCase());
 	}
 	return false;
     }
@@ -213,7 +207,7 @@ public class Players {
 	if (challengeListTimes.containsKey(challenge.toLowerCase())) {
 	    // plugin.getLogger().info("DEBUG: check " + challenge + ":" +
 	    // challengeListTimes.get(challenge.toLowerCase()).intValue() );
-	    return challengeListTimes.get(challenge.toLowerCase()).intValue();
+        return challengeListTimes.get(challenge.toLowerCase());
 	}
 	return 0;
     }
@@ -233,7 +227,7 @@ public class Players {
 	// plugin.getLogger().info("DEBUG: Complete challenge");
 	if (challengeList.containsKey(challenge)) {
 	    challengeList.remove(challenge);
-	    challengeList.put(challenge, Boolean.valueOf(true));
+        challengeList.put(challenge, Boolean.TRUE);
 	    // Count how many times the challenge has been done
 	    int times = 0;
 	    if (challengeListTimes.containsKey(challenge)) {
@@ -260,11 +254,7 @@ public class Players {
      * @return Location of this home or null if not available
      */
     public Location getHomeLocation(int number) {
-	if (homeLocations.containsKey(number)) {
-	    return homeLocations.get(number);
-	} else {
-	    return null;
-	}
+        return homeLocations.getOrDefault(number, null);
     }
 
     /**
@@ -272,7 +262,7 @@ public class Players {
      * @return List of home locations
      */
     public HashMap<Integer,Location> getHomeLocations() {
-	HashMap<Integer,Location> result = new HashMap<Integer,Location>();
+        HashMap<Integer, Location> result = new HashMap<>();
 	for (int number : homeLocations.keySet()) {
 	    result.put(number, homeLocations.get(number));
 	}
@@ -312,7 +302,7 @@ public class Players {
      */
     public void resetChallenge(final String challenge) {
 	if (challengeList.containsKey(challenge)) {
-	    challengeList.put(challenge, Boolean.valueOf(false));
+        challengeList.put(challenge, Boolean.FALSE);
 	    challengeListTimes.put(challenge, 0);
 	}
     }

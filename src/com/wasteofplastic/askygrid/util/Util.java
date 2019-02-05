@@ -116,12 +116,12 @@ public class Util {
      * @return List containing the colored lines
      */
     public static List<String> chop(ChatColor color, String longLine, int length) {
-	List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 	if (longLine == null) {
 	    return result;
 	}
 	// int multiples = longLine.length() / length;
-	int i = 0;
+		int i;
 	for (i = 0; i < longLine.length(); i += length) {
 	    // for (int i = 0; i< (multiples*length); i += length) {
 	    int endIndex = Math.min(i + length, longLine.length());
@@ -236,7 +236,7 @@ public class Util {
      * @return Location
      */
     static public Location getLocationString(final String s) {
-	if (s == null || s.trim() == "") {
+		if (s == null || s.trim().equals("")) {
 	    return null;
 	}
 	final String[] parts = s.split(":");
@@ -287,7 +287,7 @@ public class Util {
 	 * @return
 	 */
 	public static List<String> tabLimit(final List<String> list, final String start) {
-	final List<String> returned = new ArrayList<String>();
+		final List<String> returned = new ArrayList<>();
 	for (String s : list) {
 	if (s.toLowerCase().startsWith(start.toLowerCase())) {
 		returned.add(s);
@@ -303,7 +303,7 @@ public class Util {
 	 * @return
 	 */
 	public static List<String> getOnlinePlayerList() {
-	final List<String> returned = new ArrayList<String>();
+		final List<String> returned = new ArrayList<>();
 	final List<Player> players = PlayerCache.getOnlinePlayers();
 	for (Player p : players) {
 		returned.add(p.getName());

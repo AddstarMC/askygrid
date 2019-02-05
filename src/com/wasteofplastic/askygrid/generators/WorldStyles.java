@@ -19,7 +19,7 @@ import com.wasteofplastic.askygrid.ASkyGrid;
  *
  */
 public class WorldStyles {
-    private static final Map<World.Environment, WorldStyles> map = new HashMap<World.Environment, WorldStyles>(); 
+	private static final Map<World.Environment, WorldStyles> map = new HashMap<>();
 
     private final BlockProbability prob;
     private final TreeMap<Integer,EntityType> spawns;
@@ -101,17 +101,17 @@ public class WorldStyles {
 	Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid nether");
 	if (count == 0) {
 	    blockProbability.addBlock(Material.NETHERRACK, 100);
-	    blockProbability.addBlock(Material.STATIONARY_LAVA, 300);
+		blockProbability.addBlock(Material.LAVA, 300);
 	    blockProbability.addBlock(Material.GRAVEL, 30);
-	    blockProbability.addBlock(Material.MOB_SPAWNER, 2);
+		blockProbability.addBlock(Material.SPAWNER, 2);
 	    blockProbability.addBlock(Material.CHEST, 1);
 	    blockProbability.addBlock(Material.SOUL_SAND, 100);
 	    blockProbability.addBlock(Material.GLOWSTONE, 1);
 	    blockProbability.addBlock(Material.NETHER_BRICK, 30);
-	    blockProbability.addBlock(Material.NETHER_FENCE, 10);
+		blockProbability.addBlock(Material.NETHER_BRICK_FENCE, 10);
 	    blockProbability.addBlock(Material.NETHER_BRICK_STAIRS,15);
-	    blockProbability.addBlock(Material.NETHER_WARTS, 30);
-	    blockProbability.addBlock(Material.QUARTZ_ORE, 15);
+		blockProbability.addBlock(Material.NETHER_WART_BLOCK, 30);
+		blockProbability.addBlock(Material.NETHER_QUARTZ_ORE, 15);
 	    Bukkit.getLogger().warning("Using default nether blocks (fix/update config.yml)");
 	}
 	return blockProbability;
@@ -136,9 +136,9 @@ public class WorldStyles {
 	}
 	Bukkit.getLogger().info("Loaded " + count + " block types for ASkyGrid End");
 	if (count == 0) {
-	    blockProbability.addBlock(Material.ENDER_STONE, 300);
+		blockProbability.addBlock(Material.END_STONE, 300);
 	    blockProbability.addBlock(Material.OBSIDIAN, 10);
-	    blockProbability.addBlock(Material.MOB_SPAWNER, 2);
+		blockProbability.addBlock(Material.SPAWNER, 2);
 	    blockProbability.addBlock(Material.CHEST, 1);
 	    Bukkit.getLogger().warning("Using default end settings for blocks (fix/update config.yml)");
 	}
@@ -151,8 +151,8 @@ public class WorldStyles {
      */
     private static TreeMap<Integer,EntityType> normalSpawns() {	
 	// Use strings to enable backwards compatibility
-	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
-	List<String> types = new ArrayList<String>();
+		TreeMap<Integer, EntityType> s = new TreeMap<>();
+		List<String> types = new ArrayList<>();
 	types.add("CREEPER");
 	types.add("SKELETON");
 	types.add("SPIDER");
@@ -200,8 +200,8 @@ public class WorldStyles {
      * @return
      */
     private static TreeMap<Integer,EntityType> netherSpawns() {
-	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
-	HashMap<String, Integer> types = new HashMap<String,Integer>();
+		TreeMap<Integer, EntityType> s = new TreeMap<>();
+		HashMap<String, Integer> types = new HashMap<>();
 	types.put("BLAZE", 25);
 	types.put("MAGMA_CUBE", 50);
 	types.put("SKELETON", 75);
@@ -222,8 +222,8 @@ public class WorldStyles {
      * @return
      */
     private static TreeMap<Integer,EntityType> endSpawns() {
-	TreeMap<Integer,EntityType> s = new TreeMap<Integer,EntityType>();
-	HashMap<String, Integer> types = new HashMap<String,Integer>();
+		TreeMap<Integer, EntityType> s = new TreeMap<>();
+		HashMap<String, Integer> types = new HashMap<>();
 	types.put("ENDERMAN", 50);
 	types.put("ENDERMITE", 55);
 	types.put("SHULKER", 60);

@@ -17,8 +17,8 @@ public class NotSetup implements CommandExecutor {
 
     public enum Reason {
 	DISTANCE, GENERATOR, WORLD_NAME
-    };
-
+    }
+    
     private Reason reason;
 
     /**

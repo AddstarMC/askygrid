@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid.commands;
 
 import java.math.BigDecimal;
@@ -33,7 +33,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -58,7 +57,6 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
      * Constructor
      * 
      * @param plugin
-     * @param players
      */
     public SkyGridCmd(ASkyGrid plugin) {
 	// Plugin instance
@@ -162,7 +160,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 	    playerBalance = bd.doubleValue();
 	    // Util.logger(2,"DEBUG: playerbalance after rounding = "
 	    // + playerBalance);
-	    if (playerBalance != Settings.startingMoney) {
+		if (!playerBalance.equals(Settings.startingMoney)) {
 		if (playerBalance > Settings.startingMoney) {
 		    Double difference = playerBalance - Settings.startingMoney;
 		    EconomyResponse response = VaultHelper.econ.withdrawPlayer(player, Settings.worldName, difference);
@@ -396,7 +394,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 			    return true;
 			} else {
 			    // Try the warp panel
-			    int panelNum = 0;
+				int panelNum;
 			    try {
 				panelNum = Integer.valueOf(split[1]) - 1;
 			    } catch (Exception e) {
@@ -420,7 +418,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 			return true;
 		    }
 		    if (VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.sethome")) {
-			int number = 1;
+				int number;
 			try {
 			    number = Integer.valueOf(split[1]);
 			    //Util.logger(2,"DEBUG: number = " + number);
@@ -485,7 +483,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 			}
 			if (maxHomes > 1) {
 			    // Check the number given is a number
-			    int number = 0;
+				int number;
 			    try {
 				number = Integer.valueOf(split[1]);
 				if (number < 1 || number > maxHomes) {
@@ -538,7 +536,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 				}
 				// Find out which direction the warp is facing
 				Block b = warpSpot.getBlock();
-				if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
+					if (b.getType().equals(Material.SIGN) || b.getType().equals(Material.WALL_SIGN)) {
 				    Sign sign = (Sign) b.getState();
 				    org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
 				    BlockFace directionFacing = s.getFacing();
@@ -561,7 +559,7 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
 				if (!(GridManager.isSafeLocation(warpSpot))) {
 				    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).warpserrorNotSafe);
 				    // WALL_SIGN's will always be unsafe if the place in front is obscured.
-				    if (b.getType().equals(Material.SIGN_POST)) {
+					if (b.getType().equals(Material.SIGN)) {
 					plugin.getLogger().warning(
 						"Unsafe warp found at " + warpSpot.toString() + " owned by " + plugin.getPlayers().getName(foundWarp));
 
@@ -610,15 +608,15 @@ public class SkyGridCmd implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 	if (!(sender instanceof Player)) {
-	    return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 	final Player player = (Player) sender;
 
 	if (!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "player.create")) {
-	    return new ArrayList<String>();
+		return new ArrayList<>();
 	}
-
-	final List<String> options = new ArrayList<String>();
+	
+		final List<String> options = new ArrayList<>();
 	String lastArg = (args.length != 0 ? args[args.length - 1] : "");
 
 	switch (args.length) {

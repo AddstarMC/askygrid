@@ -53,7 +53,7 @@ public class Update {
     String versionGameVersion = "";
 
     // Whether the look up was successful or not
-    private boolean success = false;
+    private boolean success;
 
     /**
      * Check for updates anonymously (keyless)
@@ -88,7 +88,7 @@ public class Update {
      * @return true if successful
      */
     public boolean query() {
-	URL url = null;
+        URL url;
 
 	try {
 	    // Create the URL to query using the project's ID

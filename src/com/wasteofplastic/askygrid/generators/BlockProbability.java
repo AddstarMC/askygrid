@@ -10,7 +10,7 @@ public class BlockProbability {
     /**
      * Tree map of all materials and their probabilities as a ratio to the sum of all probabilities
      */
-    TreeMap<Integer, Material> probMap = new TreeMap<Integer, Material>();
+	TreeMap<Integer, Material> probMap = new TreeMap<>();
     /**
      * Sum of all probabilities
      */
@@ -48,7 +48,7 @@ public class BlockProbability {
 	}
 	if (bottom && temp.equals(Material.CACTUS)) {
 	    return getBlock(random, bottom, noLiquid);
-	} else if (noLiquid && (temp.equals(Material.STATIONARY_WATER) || temp.equals(Material.STATIONARY_LAVA))) {
+	} else if (noLiquid && (temp.equals(Material.WATER) || temp.equals(Material.LAVA))) {
 	    return getBlock(random, bottom, noLiquid);
 	}
 	return temp;

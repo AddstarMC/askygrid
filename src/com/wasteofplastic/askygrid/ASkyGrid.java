@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.wasteofplastic.askygrid;
 
@@ -58,6 +58,7 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
  * @author tastybento
  *         Main ASkyGrid class - provides an grid minigame in a sea of acid
  */
+@SuppressWarnings("unused")
 public class ASkyGrid extends JavaPlugin {
     // This plugin
     private static ASkyGrid plugin;
@@ -70,7 +71,7 @@ public class ASkyGrid extends JavaPlugin {
     // Challenges object
     private Challenges challenges;
     // Localization Strings
-    private HashMap<String,Locale> availableLocales = new HashMap<String,Locale>();
+	private HashMap<String, Locale> availableLocales = new HashMap<>();
     // Players object
     private PlayerCache players;
     // Listeners
@@ -261,63 +262,56 @@ public class ASkyGrid extends JavaPlugin {
 	try {
 	    final Metrics metrics = new Metrics(this);
 	    metrics.start();
-	} catch (final IOException localIOException) {
+	} catch (final IOException ignored) {
 	}
 	// Kick off a few tasks on the next tick
 	// By calling getgridWorld(), if there is no grid
 	// world, it will be created
-	getServer().getScheduler().runTask(this, new Runnable() {
-	    @Override
-	    public void run() {
-		// Create the world if it does not exist. This is run after the
-		// server starts.
-		getGridWorld();
-		// Load warps
-		getWarpSignsListener().loadWarpList();
-		// Load the warp panel
-		if (Settings.useWarpPanel) {
-		    warpPanel = new WarpPanel(plugin);
-		    getServer().getPluginManager().registerEvents(warpPanel, plugin);
-		}
-		getServer().getPluginManager().registerEvents(new ChallengePanel(plugin), plugin);
-		// econ
-		if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
-		    // Check if the world generator is registered correctly
-		    getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
-		    getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
-		    getLogger().severe("worlds:");
-		    getLogger().severe("  # The next line must be the name of your world:");
-		    getLogger().severe("  " + Settings.worldName + ":");
-		    getLogger().severe("    generator: " + plugin.getName());
-
-		    getCommand("asg").setExecutor(new NotSetup(Reason.GENERATOR));
-		    getCommand("asgc").setExecutor(new NotSetup(Reason.GENERATOR));
-		    getCommand("asgadmin").setExecutor(new NotSetup(Reason.GENERATOR));
-
-		    return;
-		}
-		getServer().getScheduler().runTask(plugin, new Runnable() {		    
-
-		    @Override
-		    public void run() {
-			// load the list - order matters - grid first, then top
-			// ten to optimize upgrades
-			// Load grid
-			if (grid == null) {
-			    grid = new GridManager(plugin);
+		getServer().getScheduler().runTask(this, () -> {
+			// Create the world if it does not exist. This is run after the
+			// server starts.
+			getGridWorld();
+			// Load warps
+			getWarpSignsListener().loadWarpList();
+			// Load the warp panel
+			if (Settings.useWarpPanel) {
+				warpPanel = new WarpPanel(plugin);
+				getServer().getPluginManager().registerEvents(warpPanel, plugin);
 			}
-			if (tinyDB == null) {
-			    tinyDB = new TinyDB(plugin);
+			getServer().getPluginManager().registerEvents(new ChallengePanel(plugin), plugin);
+			// econ
+			if (getServer().getWorld(Settings.worldName).getGenerator() == null) {
+				// Check if the world generator is registered correctly
+				getLogger().severe("********* The Generator for " + plugin.getName() + " is not registered so the plugin cannot start ********");
+				getLogger().severe("Make sure you have the following in bukkit.yml (case sensitive):");
+				getLogger().severe("worlds:");
+				getLogger().severe("  # The next line must be the name of your world:");
+				getLogger().severe("  " + Settings.worldName + ":");
+				getLogger().severe("    generator: " + plugin.getName());
+			
+				getCommand("asg").setExecutor(new NotSetup(Reason.GENERATOR));
+				getCommand("asgc").setExecutor(new NotSetup(Reason.GENERATOR));
+				getCommand("asgadmin").setExecutor(new NotSetup(Reason.GENERATOR));
+			
+				return;
 			}
-			// Add any online players to the DB
-			for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
-			    tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
-			}
-			startProtection();
-			getLogger().info("All files loaded. Ready to play...");
-		    }
-		});
-	    }
+			getServer().getScheduler().runTask(plugin, () -> {
+				// load the list - order matters - grid first, then top
+				// ten to optimize upgrades
+				// Load grid
+				if (grid == null) {
+					grid = new GridManager(plugin);
+				}
+				if (tinyDB == null) {
+					tinyDB = new TinyDB(plugin);
+				}
+				// Add any online players to the DB
+				for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
+					tinyDB.savePlayerName(onlinePlayer.getName(), onlinePlayer.getUniqueId());
+				}
+				startProtection();
+				getLogger().info("All files loaded. Ready to play...");
+			});
 	});
     }
 

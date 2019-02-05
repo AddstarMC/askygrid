@@ -2,15 +2,18 @@ package com.wasteofplastic.askygrid.protection;
 
 import java.util.UUID;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.WGBukkit;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
@@ -18,20 +21,20 @@ import com.wasteofplastic.askygrid.ASkyGrid;
 import com.wasteofplastic.askygrid.Settings;
 
 public class GGuard {
-
-    RegionManager rm;
-    RegionManager rmNether;
-    ApplicableRegionSet set;
+	
+	WorldGuardPlugin wg;
+	RegionManager rm;
+	RegionManager netherRm;
     ASkyGrid plugin;
     /**
      * @param plugin
      */
     public GGuard(ASkyGrid plugin) {
 	this.plugin = plugin;
-	rm = WGBukkit.getRegionManager(ASkyGrid.getGridWorld());
-	if (Settings.createNether && ASkyGrid.getNetherWorld() != null) {
-	    rmNether = WGBukkit.getRegionManager(ASkyGrid.getNetherWorld());
-	}
+		wg = WorldGuardPlugin.inst();
+		RegionContainer rc = WorldGuard.getInstance().getPlatform().getRegionContainer();
+		rm = rc.get(BukkitAdapter.adapt(ASkyGrid.getGridWorld()));
+		netherRm = rc.get(BukkitAdapter.adapt(ASkyGrid.getNetherWorld()));
     }
 
     /**
@@ -43,7 +46,8 @@ public class GGuard {
     public boolean canBuild(Player player, Location loc) {
 	if (loc.getWorld().equals(ASkyGrid.getGridWorld()) || (Settings.createNether && ASkyGrid.getNetherWorld() != null && loc.getWorld().equals(ASkyGrid.getNetherWorld()) ))
 	{
-	    return plugin.getWorldGuard().canBuild(player, loc);
+		RegionQuery q = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+		return q.getApplicableRegions(BukkitAdapter.adapt(loc)).testState(wg.wrapPlayer(player), Flags.BUILD);
 	}
 	return false;
     }
@@ -77,8 +81,8 @@ public class GGuard {
 	    }
 	    double x = loc.getX() - maxSize;
 	    double z = loc.getZ() - maxSize;
-	    BlockVector l1 = new BlockVector(x,0,z);
-	    BlockVector l2 = new BlockVector(x + maxSize*2, loc.getWorld().getMaxHeight(), z + maxSize *2);
+		BlockVector3 l1 = BlockVector3.at(x, 0, z);
+		BlockVector3 l2 = BlockVector3.at(x + maxSize * 2, loc.getWorld().getMaxHeight(), z + maxSize * 2);
 	    ProtectedCuboidRegion pr = new ProtectedCuboidRegion("askygrid-" + player.getUniqueId().toString() , l1, l2);
 	    LocalPlayer localPlayer = plugin.getWorldGuard().wrapPlayer(player);
 
@@ -88,17 +92,17 @@ public class GGuard {
 		}
 		// Remove any current regions
 		rm.removeRegion("askygrid-" + player.getUniqueId().toString());
-		if (rmNether != null) {
-		    rmNether.removeRegion("askygrid-" + player.getUniqueId().toString());
+			if (netherRm != null) {
+				netherRm.removeRegion("askygrid-" + player.getUniqueId().toString());
 		}
 		// make region
 		// Flags
-		if (!plugin.myLocale(player.getUniqueId()).warpsentry.isEmpty()) { 
-		    StringFlag flag = DefaultFlag.GREET_MESSAGE;
+			if (!plugin.myLocale(player.getUniqueId()).warpsentry.isEmpty()) {
+				StringFlag flag = Flags.GREET_MESSAGE;
 		    pr.setFlag(flag, plugin.myLocale(player.getUniqueId()).warpsentry.replace("[player]", player.getName()));
 		}
-		if (!plugin.myLocale(player.getUniqueId()).warpsexit.isEmpty()) { 
-		    StringFlag flag = DefaultFlag.FAREWELL_MESSAGE;
+			if (!plugin.myLocale(player.getUniqueId()).warpsexit.isEmpty()) {
+				StringFlag flag = Flags.FAREWELL_MESSAGE;
 		    pr.setFlag(flag, plugin.myLocale(player.getUniqueId()).warpsexit.replace("[player]", player.getName()));
 		}
 		//StateFlag stateFlag = DefaultFlag.BUILD;
@@ -108,26 +112,26 @@ public class GGuard {
 		rm.addRegion(pr);
 	    } else {
 		// Nether warp
-		if (rmNether.overlapsUnownedRegion(pr, localPlayer)) {
+			if (netherRm.overlapsUnownedRegion(pr, localPlayer)) {
 		    return 0;
 		}
 		// Remove any current regions
 		rm.removeRegion("askygrid-" + player.getUniqueId().toString());
-		rmNether.removeRegion("askygrid-" + player.getUniqueId().toString());
+			netherRm.removeRegion("askygrid-" + player.getUniqueId().toString());
 		// make region
 		// Flags
-		if (!plugin.myLocale(player.getUniqueId()).warpsentry.isEmpty()) { 
-		    StringFlag flag = DefaultFlag.GREET_MESSAGE;
+			if (!plugin.myLocale(player.getUniqueId()).warpsentry.isEmpty()) {
+				StringFlag flag = Flags.GREET_MESSAGE;
 		    pr.setFlag(flag, plugin.myLocale(player.getUniqueId()).warpsentry.replace("[player]", player.getName()));
 		}
-		if (!plugin.myLocale(player.getUniqueId()).warpsexit.isEmpty()) { 
-		    StringFlag flag = DefaultFlag.FAREWELL_MESSAGE;
+			if (!plugin.myLocale(player.getUniqueId()).warpsexit.isEmpty()) {
+				StringFlag flag = Flags.FAREWELL_MESSAGE;
 		    pr.setFlag(flag, plugin.myLocale(player.getUniqueId()).warpsexit.replace("[player]", player.getName()));
 		}
 		//StateFlag stateFlag = DefaultFlag.BUILD;
 		//pr.setFlag(stateFlag, State.DENY);
 		//plugin.getLogger().info("DEBUG: adding region");
-		rmNether.addRegion(pr);
+			netherRm.addRegion(pr);
 	    }
 	    return maxSize;
 	}
@@ -141,8 +145,8 @@ public class GGuard {
     public void removeRegion(UUID player) {
 	//plugin.getLogger().info("DEBUG: removing region");
 	rm.removeRegion("askygrid-" + player.toString());
-	if (rmNether != null) {
-	    rmNether.removeRegion("askygrid-" + player.toString());
+		if (netherRm != null) {
+			netherRm.removeRegion("askygrid-" + player.toString());
 	}
     }
 
@@ -158,10 +162,10 @@ public class GGuard {
 		deleted = true;
 	    }
 	}
-	if (rmNether != null) {
-	    for (String region: rmNether.getRegions().keySet()) {
+		if (netherRm != null) {
+			for (String region : netherRm.getRegions().keySet()) {
 		if (region.startsWith("askygrid-")) {
-		    rmNether.removeRegion(region);
+			netherRm.removeRegion(region);
 		    deleted = true;
 		}
 	    }

@@ -1,5 +1,5 @@
-/**
- * 
+/*
+ 
  */
 package com.wasteofplastic.askygrid;
 
@@ -11,13 +11,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Fence;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.SimpleAttachableMaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
@@ -61,8 +61,8 @@ public class GridManager {
 	//Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
 	//Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
 	// Portals are not "safe"
-	if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
-		|| space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
+		if (space1.getType() == Material.NETHER_PORTAL || ground.getType() == Material.NETHER_PORTAL || space2.getType() == Material.NETHER_PORTAL
+				|| space1.getType() == Material.END_PORTAL || ground.getType() == Material.END_PORTAL || space2.getType() == Material.END_PORTAL) {
 	    return false;
 	}
 	// If ground is AIR, then this is either not good, or they are on slab,
@@ -74,18 +74,16 @@ public class GridManager {
 	// In aSkyblock, liquid may be unsafe
 	if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
 	    // Check if acid has no damage
-	    if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
-		    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
-		    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
+		if (ground.getType().equals(Material.LAVA)
+				|| space1.getType().equals(Material.LAVA)
+				|| space2.getType().equals(Material.LAVA)) {
 		// Lava check only
 		// Bukkit.getLogger().info("DEBUG: lava");
 		return false;
 	    }
 	}
-	MaterialData md = ground.getState().getData();
-	if (md instanceof SimpleAttachableMaterialData) {
-	    //Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
-	    if (md instanceof TrapDoor) {
+		BlockData md = ground.getBlockData();
+		if (md instanceof TrapDoor) {
 		TrapDoor trapDoor = (TrapDoor)md;
 		if (trapDoor.isOpen()) {
 		    //Bukkit.getLogger().info("DEBUG: trapdoor open");
@@ -95,9 +93,9 @@ public class GridManager {
 		return false;
 	    }
 	    //Bukkit.getLogger().info("DEBUG: trapdoor closed");
-	}
-	if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().equals(Material.FENCE)
-		|| ground.getType().equals(Material.NETHER_FENCE) || ground.getType().equals(Material.SIGN_POST) || ground.getType().equals(Material.WALL_SIGN)) {
+		if (ground.getType().equals(Material.CACTUS) ||
+				ground.getType().equals(Material.OAK_BOAT) || ground.getBlockData() instanceof Fence
+				|| ground.getType().equals(Material.NETHER_BRICK_FENCE) || ground.getType().equals(Material.SIGN) || ground.getType().equals(Material.WALL_SIGN)) {
 	    // Bukkit.getLogger().info("DEBUG: cactus");
 	    return false;
 	}
@@ -106,16 +104,12 @@ public class GridManager {
 	// check
 	// a few other items
 	// isSolid thinks that PLATEs and SIGNS are solid, but they are not
-	if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN_POST) && !space1.getType().equals(Material.WALL_SIGN)) {
+		if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN) && !space1.getType().equals(Material.WALL_SIGN)) {
 	    return false;
 	}
-	if (space2.getType().isSolid()&& !space2.getType().equals(Material.SIGN_POST) && !space2.getType().equals(Material.WALL_SIGN)) {
-	    return false;
-	}
-	// Safe
+		return !space2.getType().isSolid() || space2.getType().equals(Material.SIGN) || space2.getType().equals(Material.WALL_SIGN);// Safe
 	//Bukkit.getLogger().info("DEBUG: safe!");
-	return true;
-    }
+	}
 
     /**
      * Determines a safe teleport spot on player's island or the team island
@@ -264,7 +258,7 @@ public class GridManager {
      * @return true if successful, false if not
      */
     public boolean homeTeleport(final Player player, int number) {
-	Location home = null;
+		Location home;
 	//plugin.getLogger().info("home teleport called for #" + number);
 	home = getSafeHomeLocation(player.getUniqueId(), number);
 	//plugin.getLogger().info("home get safe loc = " + home);
@@ -275,7 +269,7 @@ public class GridManager {
 		player.leaveVehicle();
 		// Remove the boat so they don't lie around everywhere
 		boat.remove();
-		player.getInventory().addItem(new ItemStack(Material.BOAT, 1));
+			player.getInventory().addItem(new ItemStack(Material.OAK_BOAT, 1));
 		player.updateInventory();
 	    }
 	}

@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyBlock is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyBlock is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid.commands;
 
 import java.io.File;
@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.registry.LegacyMapper;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -67,8 +69,8 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
 public class Challenges implements CommandExecutor, TabCompleter {
     private ASkyGrid plugin;
     // Database of challenges
-    private LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<String, List<String>>();
-    private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<UUID, List<CPItem>>();
+	private LinkedHashMap<String, List<String>> challengeList = new LinkedHashMap<>();
+	private HashMap<UUID, List<CPItem>> playerChallengeGUI = new HashMap<>();
     // Where challenges are stored
     private static FileConfiguration challengeFile = null;
     private static File challengeConfigFile = null;
@@ -123,7 +125,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		sender.sendMessage(ChatColor.WHITE + plugin.myLocale(player.getUniqueId()).challengeslevel + ": " + ChatColor.GOLD
 			+ getChallengeConfig().getString("challenges.challengeList." + challenge + ".level", ""));
 		String desc = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", "").replace("[label]", Settings.ISLANDCOMMAND));
-		List<String> result = new ArrayList<String>();
+			List<String> result = new ArrayList<>();
 		if (desc.contains("|")) {
 		    result.addAll(Arrays.asList(desc.split("\\|")));
 		} else {
@@ -145,9 +147,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    sender.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengesnotRepeatable);
 		    return true;
 		}
-		double moneyReward = 0;
-		int expReward = 0;
-		String rewardText = "";
+			double moneyReward;
+			int expReward;
+			String rewardText;
 
 		if (!plugin.getPlayers().checkChallenge(player.getUniqueId(), challenge)) {
 		    // First time
@@ -269,9 +271,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	// Grab the rewards from the config.yml file
 	String[] permList;
 	String[] itemRewards;
-	double moneyReward = 0;
-	int expReward = 0;
-	String rewardText = "";
+		double moneyReward;
+		int expReward;
+		String rewardText;
 	// If the friendly name is available use it
 	String challengeName = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".friendlyname",
 		challenge.substring(0, 1).toUpperCase() + challenge.substring(1)));
@@ -355,7 +357,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	for (String cmd : commands) {
 	    if (cmd.startsWith("[SELF]")) {
 		plugin.getLogger().info("Running command '" + cmd + "' as " + player.getName());
-		cmd = cmd.substring(6,cmd.length()).replace("[player]", player.getName()).trim();
+			cmd = cmd.substring(6).replace("[player]", player.getName()).trim();
 		try {
 		    player.performCommand(cmd);
 		} catch (Exception e) {
@@ -389,7 +391,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @return List of ItemStacks that were given to the player or null if there was an error in the interpretation of the rewards
      */
     private List<ItemStack> giveItems(Player player, String[] itemRewards) {
-	List<ItemStack> rewardedItems = new ArrayList<ItemStack>();
+		List<ItemStack> rewardedItems = new ArrayList<>();
 	Material rewardItem;
 	int rewardQty;
 	// Build the item stack of rewards to give the player
@@ -398,14 +400,14 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    if (element.length == 2) {
 		try {
 		    if (StringUtils.isNumeric(element[0])) {
-			rewardItem = Material.getMaterial(Integer.parseInt(element[0]));
+				rewardItem = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(element[0])));
 		    } else {
 			rewardItem = Material.getMaterial(element[0].toUpperCase());
 		    }
 		    rewardQty = Integer.parseInt(element[1]);
 		    ItemStack item = new ItemStack(rewardItem, rewardQty);
 		    rewardedItems.add(item);
-		    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(new ItemStack[] { item });
+			final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(item);
 		    if (!leftOvers.isEmpty()) {
 			player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
 		    }
@@ -436,19 +438,19 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    } else if (element.length == 3) {
 		try {
 		    if (StringUtils.isNumeric(element[0])) {
-			rewardItem = Material.getMaterial(Integer.parseInt(element[0]));
+			
+				rewardItem = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(element[0])));
 		    } else {
 			rewardItem = Material.getMaterial(element[0].toUpperCase());
 		    }
-		    rewardQty = Integer.parseInt(element[2]);                    
+			rewardQty = Integer.parseInt(element[2]);
 		    // Check for POTION
 		    if (rewardItem.equals(Material.POTION)) {
 			givePotion(player, rewardedItems, element, rewardQty);
 		    } else {
 			ItemStack item = null;
 			// Normal item, not a potion, check if it is a Monster Egg
-			if (rewardItem.equals(Material.MONSTER_EGG)) {
-
+				if (rewardItem.equals(Material.LEGACY_MONSTER_EGG)) {
 			    try {                                
 				EntityType type = EntityType.valueOf(element[1].toUpperCase());
 				if (Bukkit.getServer().getVersion().contains("(MC: 1.8") || Bukkit.getServer().getVersion().contains("(MC: 1.7")) {
@@ -471,7 +473,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			if (item != null) {
 			    rewardedItems.add(item);
 			    final HashMap<Integer, ItemStack> leftOvers = player.getInventory().addItem(
-				    new ItemStack[] { item });
+						item);
 			    if (!leftOvers.isEmpty()) {
 				player.getWorld().dropItemNaturally(player.getLocation(), leftOvers.get(0));
 			    }
@@ -525,7 +527,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		// Potion format = POTION:name:level:extended:splash:qty
 		try {
 		    if (StringUtils.isNumeric(element[0])) {
-			rewardItem = Material.getMaterial(Integer.parseInt(element[0]));
+				rewardItem = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(element[0])));
 		    } else {
 			rewardItem = Material.getMaterial(element[0].toUpperCase());
 		    }
@@ -630,7 +632,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		}
 		PotionMeta potionMeta = (PotionMeta) result.getItemMeta();
 		try {
-		    PotionData potionData = new PotionData(PotionType.valueOf(element[1].toUpperCase()), extended, level > 1 ? true: false);
+			PotionData potionData = new PotionData(PotionType.valueOf(element[1].toUpperCase()), extended, level > 1);
 		    potionMeta.setBasePotionData(potionData); 
 		} catch (IllegalArgumentException iae) {
 		    Bukkit.getLogger().severe("Potion parsing problem with " + element[1] +": " + iae.getMessage());
@@ -669,12 +671,12 @@ public class Challenges implements CommandExecutor, TabCompleter {
 
     }
 
-    /**
-     * Returns a color formatted string for all the challenges of a particular
-     * level for a player Repeatable challenges are AQUA, completed are Dark
-     * Green and yet to be done are green.
-     * 
-     * @param player
+    /*
+      Returns a color formatted string for all the challenges of a particular
+      level for a player Repeatable challenges are AQUA, completed are Dark
+      Green and yet to be done are green.
+      
+      @param player
      * @param level
      * @return string of challenges
      */
@@ -793,7 +795,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    if (!hasRequired(player, challenge, "inventory")) {
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
 		String desc = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".description", "").replace("[label]", Settings.ISLANDCOMMAND));
-		List<String> result = new ArrayList<String>();
+			List<String> result = new ArrayList<>();
 		if (desc.contains("|")) {
 		    result.addAll(Arrays.asList(desc.split("\\|")));
 		} else {
@@ -817,8 +819,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    searchRadius = 50;
 		}
 		player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotCloseEnough.replace("[number]", String.valueOf(searchRadius)));
-		String desc = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));    
-		List<String> result = new ArrayList<String>();
+			String desc = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));
+			List<String> result = new ArrayList<>();
 		if (desc.contains("|")) {
 		    result.addAll(Arrays.asList(desc.split("\\|")));
 		} else {
@@ -852,7 +854,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		if (challengeList.containsKey(level)) {
 		    challengeList.get(level).add(s);
 		} else {
-		    List<String> t = new ArrayList<String>();
+			List<String> t = new ArrayList<>();
 		    t.add(s);
 		    challengeList.put(level, t);
 		}
@@ -880,8 +882,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    if (moneyReq > 0D) {
 		if (!VaultHelper.econ.has(player, Settings.worldName, moneyReq)) {
 		    player.sendMessage(ChatColor.RED + plugin.myLocale(player.getUniqueId()).challengeserrorNotEnoughItems);
-		    String desc = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));    
-		    List<String> result = new ArrayList<String>();
+			String desc = ChatColor.translateAlternateColorCodes('&', getChallengeConfig().getString("challenges.challengeList." + challenge + ".description").replace("[label]", Settings.ISLANDCOMMAND));
+			List<String> result = new ArrayList<>();
 		    if (desc.contains("|")) {
 			result.addAll(Arrays.asList(desc.split("\\|")));
 		    } else {
@@ -902,9 +904,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	// This second one is so that items such as potions or variations on
 	// standard items can be collected
 	if (type.equalsIgnoreCase("inventory")) {
-	    List<ItemStack> toBeRemoved = new ArrayList<ItemStack>();
+		List<ItemStack> toBeRemoved = new ArrayList<>();
 	    Material reqItem;
-	    int reqAmount = 0;
+		int reqAmount;
 	    for (final String s : reqList) {
 		final String[] part = s.split(":");
 		// Material:Qty
@@ -924,7 +926,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			}
 			// TODO: add netherwart vs. netherstalk?
 			if (StringUtils.isNumeric(part[0])) {
-			    reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+				reqItem = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(part[0])));
 			} else {
 			    reqItem = Material.getMaterial(part[0].toUpperCase());
 			}
@@ -1044,16 +1046,13 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			part[0] = "SKULL_ITEM";
 		    }
 		    if (StringUtils.isNumeric(part[0])) {
-			reqItem = Material.getMaterial(Integer.parseInt(part[0]));
+				reqItem = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(part[0])));
 		    } else {
 			reqItem = Material.getMaterial(part[0].toUpperCase());
 		    }
 		    reqAmount = Integer.parseInt(part[2]);
 		    int reqDurability = Integer.parseInt(part[1]);
-		    ItemStack item = new ItemStack(reqItem);
-
-		    // Item
-		    item.setDurability((short) reqDurability);
+			ItemStack item = new ItemStack(reqItem, 1, (short) reqDurability);
 		    // check amount
 		    int amount = 0;
 		    // Go through all the inventory and try to find
@@ -1350,55 +1349,55 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    return true;
 	}
 	if (type.equalsIgnoreCase("collect")) {
-	    final HashMap<Material, Integer> neededItem = new HashMap<Material, Integer>();
-	    final HashMap<EntityType, Integer> neededEntities = new HashMap<EntityType, Integer>();
-	    for (int i = 0; i < reqList.length; i++) {
-		final String[] sPart = reqList[i].split(":");
-		// Parse the qty required first
-		try {
-		    final int qty = Integer.parseInt(sPart[1]);
-		    // Find out if the needed item is a Material or an Entity
-		    boolean isEntity = false;
-		    for (EntityType entityType : EntityType.values()) {
-			if (entityType.toString().equalsIgnoreCase(sPart[0])) {
-			    isEntity = true;
-			    break;
+		final HashMap<Material, Integer> neededItem = new HashMap<>();
+		final HashMap<EntityType, Integer> neededEntities = new HashMap<>();
+		for (String s : reqList) {
+			final String[] sPart = s.split(":");
+			// Parse the qty required first
+			try {
+				final int qty = Integer.parseInt(sPart[1]);
+				// Find out if the needed item is a Material or an Entity
+				boolean isEntity = false;
+				for (EntityType entityType : EntityType.values()) {
+					if (entityType.toString().equalsIgnoreCase(sPart[0])) {
+						isEntity = true;
+						break;
+					}
+				}
+				if (isEntity) {
+					// plugin.getLogger().info("DEBUG: Item " +
+					// sPart[0].toUpperCase() + " is an entity");
+					EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
+					if (entityType != null) {
+						neededEntities.put(entityType, qty);
+						// plugin.getLogger().info("DEBUG: Needed entity is "
+						// + Integer.parseInt(sPart[1]) + " x " +
+						// EntityType.valueOf(sPart[0].toUpperCase()).toString());
+					}
+				} else {
+					Material item;
+					if (StringUtils.isNumeric(sPart[0])) {
+						item = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(sPart[0])));
+					} else {
+						item = Material.getMaterial(sPart[0].toUpperCase());
+					}
+					if (item != null) {
+						neededItem.put(item, qty);
+						// plugin.getLogger().info("DEBUG: Needed item is "
+						// + Integer.parseInt(sPart[1]) + " x " +
+						// Material.getMaterial(sPart[0]).toString());
+						
+					} else {
+						plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
+						return false;
+					}
+				}
+			} catch (Exception intEx) {
+				plugin.getLogger().warning("Problem parsing required items for challenge " + challenge + " in challenges.yml - skipping");
+				return false;
 			}
-		    }
-		    if (isEntity) {
-			// plugin.getLogger().info("DEBUG: Item " +
-				// sPart[0].toUpperCase() + " is an entity");
-			EntityType entityType = EntityType.valueOf(sPart[0].toUpperCase());
-			if (entityType != null) {
-			    neededEntities.put(entityType, qty);
-			    // plugin.getLogger().info("DEBUG: Needed entity is "
-			    // + Integer.parseInt(sPart[1]) + " x " +
-			    // EntityType.valueOf(sPart[0].toUpperCase()).toString());
-			}
-		    } else {	
-			Material item;
-			if (StringUtils.isNumeric(sPart[0])) {
-			    item = Material.getMaterial(Integer.parseInt(sPart[0]));
-			} else {
-			    item = Material.getMaterial(sPart[0].toUpperCase());
-			}
-			if (item != null) {
-			    neededItem.put(item, qty);
-			    // plugin.getLogger().info("DEBUG: Needed item is "
-				    // + Integer.parseInt(sPart[1]) + " x " +
-				    // Material.getMaterial(sPart[0]).toString());
-
-			} else {
-			    plugin.getLogger().warning("Problem parsing required item for challenge " + challenge + " in challenges.yml!");
-			    return false;
-			}
-		    }
-		} catch (Exception intEx) {
-		    plugin.getLogger().warning("Problem parsing required items for challenge " + challenge + " in challenges.yml - skipping");
-		    return false;
+			
 		}
-
-	    }
 	    // We now have two sets of required items or entities
 	    // Check the items first
 	    final Location l = player.getLocation();
@@ -1527,7 +1526,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	//plugin.getLogger().info("DEBUG: level requested = " + level);
 	// Create the challenges control panel
 	// New panel map
-	List<CPItem> cp = new ArrayList<CPItem>();
+		List<CPItem> cp = new ArrayList<>();
 
 	// Do some checking
 	// plugin.getLogger().severe("DEBUG: Opening level " + level);
@@ -1561,9 +1560,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	for (int i = 0; i < Settings.challengeLevels.size(); i++) {
 	    if (!level.equalsIgnoreCase(Settings.challengeLevels.get(i))) {
 		// Add a navigation book
-		List<String> lore = new ArrayList<String>();
+			List<String> lore;
 		if (i <= levelDone) {
-		    CPItem item = new CPItem(Material.BOOK_AND_QUILL, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
+			CPItem item = new CPItem(Material.WRITABLE_BOOK, ChatColor.GOLD + Settings.challengeLevels.get(i), null, null);
 		    lore = Util.chop(ChatColor.WHITE, plugin.myLocale(player.getUniqueId()).challengesNavigation.replace("[level]", Settings.challengeLevels.get(i)), 25);
 		    item.setNextSection(Settings.challengeLevels.get(i));
 		    item.setLore(lore);
@@ -1649,7 +1648,8 @@ public class Challenges implements CommandExecutor, TabCompleter {
 			iconName = "NETHER_STALK";
 		    }
 		    if (StringUtils.isNumeric(iconName)) {
-			icon = new ItemStack(Integer.parseInt(iconName));
+				Material mat = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(iconName)));
+				icon = new ItemStack(mat);
 		    } else {
 			icon = new ItemStack(Material.valueOf(iconName));
 		    }
@@ -1663,7 +1663,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 		    }
 		} else if (split.length == 2) {
 		    if (StringUtils.isNumeric(split[0])) {
-			icon = new ItemStack(Integer.parseInt(split[0]));
+			
+				Material mat = BukkitAdapter.adapt(LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(split[0])));
+				icon = new ItemStack(mat, 1);
 		    } else {
 			icon = new ItemStack(Material.valueOf(split[0]));
 		    }
@@ -1740,7 +1742,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @return List of strings splitting challenge string into 25 chars long 
      */
     private List<String> challengeDescription(String challenge, Player player) {
-	List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 	final int length = 25;
 	// plugin.getLogger().info("DEBUG: challenge is '"+challenge+"'");
 	// plugin.getLogger().info("challenges.challengeList." + challenge +
@@ -1804,9 +1806,9 @@ public class Challenges implements CommandExecutor, TabCompleter {
 	    result.addAll(Util.chop(ChatColor.RED, plugin.myLocale(player.getUniqueId()).challengesnotRepeatable, length));
 	    return result;
 	}
-	double moneyReward = 0;
-	int expReward = 0;
-	String rewardText = "";
+		double moneyReward;
+		int expReward;
+		String rewardText;
 	if (!plugin.getPlayers().checkChallenge(player.getUniqueId(), challenge)) {
 	    // First time
 	    moneyReward = getChallengeConfig().getDouble("challenges.challengeList." + challenge.toLowerCase() + ".moneyReward", 0);
@@ -1897,7 +1899,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * Gets a list of all challenges in existence.
      */
     public List<String> getAllChallenges() {
-	List<String> returned = new ArrayList<String>();
+		List<String> returned = new ArrayList<>();
 	for (List<String> challenges : challengeList.values()) {
 	    returned.addAll(challenges);
 	}
@@ -1914,7 +1916,7 @@ public class Challenges implements CommandExecutor, TabCompleter {
      * @return List of challenges
      */
     public List<String> getAvailableChallenges(Player player) {
-	List<String> returned = new ArrayList<String>();
+		List<String> returned = new ArrayList<>();
 	for (Map.Entry<String, List<String>> e : challengeList.entrySet())
 	    if (isLevelAvailable(player, e.getKey())) {
 		returned.addAll(e.getValue());
@@ -1925,11 +1927,11 @@ public class Challenges implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
 	if (!(sender instanceof Player)) {
-	    return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 	Player player = (Player) sender;
-
-	List<String> options = new ArrayList<String>();
+	
+		List<String> options = new ArrayList<>();
 
 	switch (args.length) {
 	case 0: 

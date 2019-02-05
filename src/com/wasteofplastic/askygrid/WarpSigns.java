@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyGrid.
- *
- *     ASkyGrid is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyGrid is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyGrid.
+ 
+ ASkyGrid is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyGrid is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyGrid.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ import com.wasteofplastic.askygrid.util.VaultHelper;
 public class WarpSigns implements Listener {
     private final ASkyGrid plugin;
     // Map of all warps stored as player, warp sign Location
-    private HashMap<UUID, Object> warpList = new HashMap<UUID, Object>();
+	private HashMap<UUID, Object> warpList;
     // Where warps are stored
     private YamlConfiguration welcomeWarps;
     //private HashMap<UUID, Rectangle2D> protectionArea = new HashMap<UUID, Rectangle2D>();
@@ -60,7 +60,7 @@ public class WarpSigns implements Listener {
      */
     public WarpSigns(ASkyGrid plugin) {
 	this.plugin = plugin;
-	this.warpList = new HashMap<UUID, Object>();
+		this.warpList = new HashMap<>();
     }
 
     /**
@@ -72,7 +72,7 @@ public class WarpSigns implements Listener {
 	Block b = e.getBlock();
 	Player player = e.getPlayer();
 	if (b.getWorld().equals(ASkyGrid.getGridWorld())) {
-	    if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
+		if (b.getType().equals(Material.SIGN) || b.getType().equals(Material.WALL_SIGN)) {
 		Sign s = (Sign) b.getState();
 		if (s != null) {
 		    if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
@@ -120,7 +120,7 @@ public class WarpSigns implements Listener {
 	Player player = e.getPlayer();
 	if (player.getWorld().equals(ASkyGrid.getGridWorld())) {
 	    //plugin.getLogger().info("DEBUG: Correct world");
-	    if (e.getBlock().getType().equals(Material.SIGN_POST) || e.getBlock().getType().equals(Material.WALL_SIGN)) {
+		if (e.getBlock().getType().equals(Material.SIGN) || e.getBlock().getType().equals(Material.WALL_SIGN)) {
 		//plugin.getLogger().info("DEBUG: The first line of the sign says " + title);
 		if (title.equalsIgnoreCase(plugin.myLocale().warpswelcomeLine)) {
 		    //plugin.getLogger().info("DEBUG: Welcome sign detected");
@@ -170,7 +170,7 @@ public class WarpSigns implements Listener {
 			// so,
 			// deactivate it
 			Block oldSignBlock = oldSignLoc.getBlock();
-			if (oldSignBlock.getType().equals(Material.SIGN_POST) || oldSignBlock.getType().equals(Material.WALL_SIGN)) {
+				if (oldSignBlock.getType().equals(Material.SIGN) || oldSignBlock.getType().equals(Material.WALL_SIGN)) {
 			    // The block is still a sign
 			    //plugin.getLogger().info("DEBUG: The block is still a sign");
 			    Sign oldSign = (Sign) oldSignBlock.getState();
@@ -210,7 +210,7 @@ public class WarpSigns implements Listener {
 	    return;
 	}
 	//plugin.getLogger().info("Saving warps...");
-	final HashMap<String, Object> warps = new HashMap<String, Object>();
+		final HashMap<String, Object> warps = new HashMap<>();
 	for (UUID p : warpList.keySet()) {
 	    warps.put(p.toString(), warpList.get(p));
 	}
@@ -228,12 +228,7 @@ public class WarpSigns implements Listener {
 	if (reloadPanel) {
 	    // This is not done on shutdown
 	    if (Settings.useWarpPanel && plugin.getWarpPanel() != null) {
-		plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-		    @Override
-		    public void run() {
-			plugin.getWarpPanel().updatePanel();
-		    }});
+			plugin.getServer().getScheduler().runTask(plugin, () -> plugin.getWarpPanel().updatePanel());
 	    }
 	}
 	//plugin.getLogger().info("End of saving warps");
@@ -261,7 +256,7 @@ public class WarpSigns implements Listener {
 		//plugin.getLogger().info("DEBUG: Loading warp at " + l);
 		Block b = l.getBlock();
 		// Check that a warp sign is still there
-		if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
+			if (b.getType().equals(Material.SIGN) || b.getType().equals(Material.WALL_SIGN)) {
 		    warpList.put(playerUUID, temp.get(s));
 		    // Get the protection area
 		    /*
@@ -274,14 +269,14 @@ public class WarpSigns implements Listener {
 			e.printStackTrace();
 		    }*/
 		} else {
-		    plugin.getLogger().warning("Warp at location " + (String) temp.get(s) + " has no sign - removing.");
+				plugin.getLogger().warning("Warp at location " + temp.get(s) + " has no sign - removing.");
 		    if (plugin.getGguard() != null) {
 			plugin.getGguard().removeRegion(playerUUID);
 			plugin.getLogger().warning("Removed WG protection region.");
 		    }
 		}
 	    } catch (Exception e) {
-		plugin.getLogger().severe("Problem loading warp at location " + (String) temp.get(s) + " - ignoring.");
+			plugin.getLogger().severe("Problem loading warp at location " + temp.get(s) + " - ignoring.");
 	    }
 	}
     }
@@ -305,9 +300,9 @@ public class WarpSigns implements Listener {
 	return true;
     }
 
-    /**
-     * Returns the protection rectangle applicable for this player
-     * @param player
+    /*
+      Returns the protection rectangle applicable for this player
+      @param player
      * @param loc
      * @return rectangle
      */
@@ -354,7 +349,7 @@ public class WarpSigns implements Listener {
 
     private void popSign(Location loc) {
 	Block b = loc.getBlock();
-	if (b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
+		if (b.getType().equals(Material.SIGN) || b.getType().equals(Material.WALL_SIGN)) {
 	    Sign s = (Sign) b.getState();
 	    if (s != null) {
 		if (s.getLine(0).equalsIgnoreCase(ChatColor.GREEN + plugin.myLocale().warpswelcomeLine)) {
@@ -376,7 +371,7 @@ public class WarpSigns implements Listener {
 	popSign(loc);
 	if (warpList.containsValue(locS)) {
 	    // Step through every key (sigh)
-	    List<UUID> playerList = new ArrayList<UUID>();
+		List<UUID> playerList = new ArrayList<>();
 	    for (UUID player : warpList.keySet()) {
 		if (locS.equals(warpList.get(player))) {
 		    playerList.add(player);
@@ -418,11 +413,8 @@ public class WarpSigns implements Listener {
      */
     public boolean checkWarp(Location loc) {
 	final String locS = Util.getStringLocation(loc);
-	if (warpList.containsValue(locS)) {
-	    return true;
+		return warpList.containsValue(locS);
 	}
-	return false;
-    }
 
     /**
      * Lists all the known warps
@@ -438,7 +430,7 @@ public class WarpSigns implements Listener {
      */
     public Collection<UUID> listSortedWarps() {
 	// Bigger value of time means a more recent login
-	TreeMap<Long, UUID> map = new TreeMap<Long, UUID>();
+		TreeMap<Long, UUID> map = new TreeMap<>();
 	for (UUID uuid : warpList.keySet()) {
 	    map.put(plugin.getServer().getOfflinePlayer(uuid).getLastPlayed(), uuid);
 	}
@@ -479,9 +471,9 @@ public class WarpSigns implements Listener {
 	return "";
     }
 
-    /**
-     * Checks if a player is in a protected area. 
-     * @param playerUUID
+    /*
+      Checks if a player is in a protected area.
+      @param playerUUID
      * @param loc
      * @return true if in a protected area, false if not or in your own protected area
      */

@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyBlock.
- *
- *     ASkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyBlock.
+ 
+ ASkyBlock is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyBlock is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.wasteofplastic.askygrid;
 
@@ -48,7 +48,7 @@ public class TinyDB {
      */
     public TinyDB(ASkyGrid plugin) {       
         this.plugin = plugin;
-        this.treeMap = new ConcurrentHashMap<String,UUID>();
+        this.treeMap = new ConcurrentHashMap<>();
         File database = new File(plugin.getDataFolder(), "name-uuid.txt");
         if (!database.exists()) {
             // Import from player files. Done async so may take a while
@@ -102,12 +102,10 @@ public class TinyDB {
                             // Read next lines
                             line = br.readLine();
                             uuid = br.readLine();
-                        } 
-                        br.close();
+                        }
                     }
-                    
-                }                
-                out.close();      
+    
+                }
             }
             
             // Move files around
@@ -124,22 +122,16 @@ public class TinyDB {
     }
 
     private void convertFiles() {
-        /** create database */
+        /* create database */
         new BukkitRunnable() {
 
             @Override
             public void run() {
                 try {
                     // Load all the files from the player folder
-                    FilenameFilter ymlFilter = new FilenameFilter() {
-                        public boolean accept(File dir, String name) {
-                            String lowercaseName = name.toLowerCase();
-                            if (lowercaseName.endsWith(".yml")) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
+                    FilenameFilter ymlFilter = (dir, name) -> {
+                        String lowercaseName = name.toLowerCase();
+                        return lowercaseName.endsWith(".yml");
                     };
                     int count = 0;
                     for (final File file : plugin.getPlayersFolder().listFiles(ymlFilter)) {

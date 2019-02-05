@@ -3,12 +3,13 @@ package com.wasteofplastic.askygrid;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Fence;
+import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.Switch;
+import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -39,7 +40,6 @@ public class SafeSpotTeleport {
      * @param plugin
      * @param player
      * @param l
-     * @param setHome
      */
     public SafeSpotTeleport(final ASkyGrid plugin, final Entity player, final Location l, final int number) {
 	new SafeSpotTeleport(plugin, player, l, number, "", true);
@@ -66,7 +66,7 @@ public class SafeSpotTeleport {
 	if (true) {
 	    final World world = islandLoc.getWorld();
 	    // Get the chunks
-	    List<ChunkSnapshot> chunkSnapshot = new ArrayList<ChunkSnapshot>();
+		List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
 	    // Add the center chunk
 	    chunkSnapshot.add(islandLoc.getChunk().getChunkSnapshot());
 	    // Add immediately adjacent chunks
@@ -106,9 +106,9 @@ public class SafeSpotTeleport {
 		public void run() {
 		    // Find a safe spot, defined as a solid block, with 2 air spaces above it
 		    //long time = System.nanoTime();
-		    int x = 0;
-		    int y = 0;
-		    int z = 0;
+			int x;
+			int y;
+			int z;
 		    ChunkSnapshot safeChunk = null;
 		    ChunkSnapshot portalChunk = null;
 		    boolean safeSpotFound = false;
@@ -130,7 +130,7 @@ public class SafeSpotTeleport {
 				    for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
 					//System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
 					// Check for portal - only if this is not a safe home search
-					if (!setHome && chunk.getBlockTypeId(x, y, z) == Material.PORTAL.getId()) {
+						if (!setHome && chunk.getBlockData(x, y, z).getMaterial() == Material.NETHER_PORTAL) {
 					    if (portalPart == null || (distance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
 						// First one found or a closer one, save the chunk the position and the distance
 						portalChunk = chunk;
@@ -165,7 +165,7 @@ public class SafeSpotTeleport {
 			x = portalPart.getBlockX();
 			y = portalPart.getBlockY();
 			z = portalPart.getBlockZ();
-			while (portalChunk.getBlockTypeId(x,y,z) == Material.PORTAL.getId()) {
+				while (portalChunk.getBlockData(x, y, z).getMaterial() == Material.NETHER_PORTAL) {
 			    y--;
 			}
 			//System.out.print("DEBUG: Portal teleport loc = " + (16 * portalChunk.getX() + x) + "," + (y) + "," + (16 * portalChunk.getZ() + z));
@@ -184,54 +184,48 @@ public class SafeSpotTeleport {
 			//final Vector spot = new Vector((16 *currentChunk.getX()) + x + 0.5D, y +1, (16 * currentChunk.getZ()) + z + 0.5D)
 			final Vector spot = new Vector((16 *safeChunk.getX()) + 0.5D, 1, (16 * safeChunk.getZ()) + 0.5D).add(safeSpotInChunk);
 			// Return to main thread and teleport the player
-			plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-			    @Override
-			    public void run() {
-				Location destination = spot.toLocation(islandLoc.getWorld());
-				//plugin.getLogger().info("DEBUG: safe spot found = " + destination);
-
-				// Create a portal
-				// TODO Add if statement here
-				//Block b = player.getLocation().getBlock();
-				//if (b.getType() != Material.PORTAL) {
-				/*
-				if (world.equals(ASkyGrid.getNetherWorld())) {
-				    for (int x = -1; x < 3; x++) {
-					for (int y = -1; y< 4; y++) {
-					    Location l = new Location(islandLoc.getWorld(), destination.getBlockX() + x, destination.getBlockY() + y, destination.getBlockZ() -1);
-					    if (x == -1 || x == 2 || y == -1 || y == 3) {
-						//nms.setBlockSuperFast(l.getBlock(), Material.OBSIDIAN.getId(), (byte)0, false);
-						//l.getBlock().setType(Material.OBSIDIAN);
-						//plugin.getLogger().info("DEBUG: obsidian at "+ l);
-					    } else {
-						//plugin.getLogger().info("DEBUG: Portal at "+ l);
-						nms.setBlockSuperFast(l.getBlock(), Material.PORTAL.getId(), (byte)0, false);
-						//l.getBlock().setType(Material.PORTAL);
-					    }
+				plugin.getServer().getScheduler().runTask(plugin, () -> {
+					Location destination = spot.toLocation(islandLoc.getWorld());
+					//plugin.getLogger().info("DEBUG: safe spot found = " + destination);
+				
+					// Create a portal
+					// kTODO Add if statement here
+					//Block b = player.getLocation().getBlock();
+					//if (b.getType() != Material.PORTAL) {
+			/*
+			if (world.equals(ASkyGrid.getNetherWorld())) {
+				for (int x = -1; x < 3; x++) {
+				for (int y = -1; y< 4; y++) {
+					Location l = new Location(islandLoc.getWorld(), destination.getBlockX() + x, destination.getBlockY() + y, destination.getBlockZ() -1);
+					if (x == -1 || x == 2 || y == -1 || y == 3) {
+					//nms.setBlockSuperFast(l.getBlock(), Material.OBSIDIAN.getId(), (byte)0, false);
+					//l.getBlock().setType(Material.OBSIDIAN);
+					//plugin.getLogger().info("DEBUG: obsidian at "+ l);
+					} else {
+					//plugin.getLogger().info("DEBUG: Portal at "+ l);
+					nms.setBlockSuperFast(l.getBlock(), Material.PORTAL.getId(), (byte)0, false);
+					//l.getBlock().setType(Material.PORTAL);
 					}
-				    }
-				}*/
-				if (setHome && entity instanceof Player) {
-				    plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
 				}
-				Vector velocity = entity.getVelocity();
-				entity.teleport(destination);
-				entity.setVelocity(velocity);
-			    }});
+				}
+			}*/
+					if (setHome && entity instanceof Player) {
+						plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
+					}
+					Vector velocity = entity.getVelocity();
+					entity.teleport(destination);
+					entity.setVelocity(velocity);
+				});
 		    } else {
 			// We did not find a spot
-			plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-			    @Override
-			    public void run() {
-				//plugin.getLogger().info("DEBUG: safe spot not found");
-				if (!failureMessage.isEmpty()) {
-				    entity.sendMessage(failureMessage);
-				} else {
-				    entity.sendMessage(ChatColor.RED + plugin.myLocale(entity.getUniqueId()).warpserrorNotSafe);
-				}
-			    }});
+				plugin.getServer().getScheduler().runTask(plugin, () -> {
+					//plugin.getLogger().info("DEBUG: safe spot not found");
+					if (!failureMessage.isEmpty()) {
+						entity.sendMessage(failureMessage);
+					} else {
+						entity.sendMessage(ChatColor.RED + plugin.myLocale(entity.getUniqueId()).warpserrorNotSafe);
+					}
+				});
 		    }
 		}
 
@@ -245,64 +239,55 @@ public class SafeSpotTeleport {
 		 */
 		@SuppressWarnings("deprecation")
 		private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
-		    int type = chunk.getBlockTypeId(x, y, z);
-		    if (type != 0) { // AIR
-			int space1 = chunk.getBlockTypeId(x, y + 1, z);
-			int space2 = chunk.getBlockTypeId(x, y + 2, z);
-			if ((space1 == 0 && space2 == 0) || (space1 == Material.PORTAL.getId() && space2 == Material.PORTAL.getId())) {
-			    // Now there is a chance that this is a safe spot
-			    // Check for safe ground
-			    Material mat = Material.getMaterial(type);
-			    if (!mat.toString().contains("FENCE") 
-				    && !mat.toString().contains("DOOR")
-				    && !mat.toString().contains("GATE")
-				    && !mat.toString().contains("PLATE")) {
-				switch (mat) {
-				// Unsafe
+			BlockData data = chunk.getBlockData(x, y, z);
+			BlockData up1 = chunk.getBlockData(x, y + 1, z);
+			BlockData up2 = chunk.getBlockData(x, y + 2, z);
+			if (!(up1.getMaterial() == Material.AIR || up1.getMaterial() == Material.NETHER_PORTAL) && !(up2.getMaterial() == Material.AIR && up2.getMaterial() == Material.NETHER_PORTAL)) {
+				return false;
+			}
+			switch (data.getMaterial()) {
+				case AIR:
+				case NETHER_PORTAL:
+				case END_PORTAL:
+				case LADDER:
 				case ANVIL:
-				case BARRIER:
-				case BOAT:
 				case CACTUS:
-				case DOUBLE_PLANT:
-				case ENDER_PORTAL:
 				case FIRE:
 				case FLOWER_POT:
-				case LADDER:
-				case LAVA:
-				case LEVER:
-				case LONG_GRASS:
-				case PISTON_EXTENSION:
-				case PISTON_MOVING_PIECE:
-				case PORTAL:
-				case SIGN_POST:
-				case SKULL:
-				case STANDING_BANNER:
-				case STATIONARY_LAVA:
-				case STATIONARY_WATER:
-				case STONE_BUTTON:
-				case TORCH:
-				case TRIPWIRE:
 				case WATER:
-				case WEB:
-				case WOOD_BUTTON:
-				    //System.out.println("Block is dangerous " + mat.toString());
-				    break;
+				case LAVA:
+				case SIGN:
+				case TORCH:
+				case PISTON_HEAD:
+				case COBWEB:
+				case TALL_GRASS:
+				case ROSE_BUSH:
+				case SUNFLOWER:
+				case BARRIER:
+				case SKELETON_WALL_SKULL:
+				case PLAYER_WALL_HEAD:
+				case ZOMBIE_WALL_HEAD:
+				case WITHER_SKELETON_WALL_SKULL:
+				case SKELETON_SKULL:
+				case PLAYER_HEAD:
+				case WITHER_SKELETON_SKULL:
+				case ZOMBIE_HEAD:
+				case LEGACY_WALL_BANNER:
+					return false;
 				default:
-				    // Safe
-				    // System.out.println("Block is safe " + mat.toString());
-				    return true;
-				}
-			    }
+					if (data instanceof Fence || data instanceof Gate || data instanceof Tripwire || data instanceof Switch) {
+						return false;
+					}
 			}
-		    }
-		    return false;
-		}});
+			return true;
+		}
+		});
 	}
     }
 
-    /**
-     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
-     * @return NMSAbstraction class
+    /*
+      Checks what version the server is running and picks the appropriate NMS handler, or fallback
+      @return NMSAbstraction class
      * @throws ClassNotFoundException
      * @throws IllegalArgumentException
      * @throws SecurityException

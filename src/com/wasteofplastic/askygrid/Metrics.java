@@ -55,10 +55,10 @@ public class Metrics {
 
 	configurationFile = getConfigFile();
 	configuration = YamlConfiguration.loadConfiguration(configurationFile);
-
-	configuration.addDefault("opt-out", Boolean.valueOf(false));
+    
+        configuration.addDefault("opt-out", Boolean.FALSE);
 	configuration.addDefault("guid", UUID.randomUUID().toString());
-	configuration.addDefault("debug", Boolean.valueOf(false));
+        configuration.addDefault("debug", Boolean.FALSE);
 
 	if (configuration.get("guid", null) == null) {
 	    configuration.options().header("http://mcstats.org").copyDefaults(true);
@@ -72,7 +72,7 @@ public class Metrics {
     public void disable() throws IOException {
 	synchronized (optOutLock) {
 	    if (!isOptOut()) {
-		configuration.set("opt-out", Boolean.valueOf(true));
+            configuration.set("opt-out", Boolean.TRUE);
 		configuration.save(configurationFile);
 	    }
 
@@ -86,7 +86,7 @@ public class Metrics {
     public void enable() throws IOException {
 	synchronized (optOutLock) {
 	    if (isOptOut()) {
-		configuration.set("opt-out", Boolean.valueOf(false));
+            configuration.set("opt-out", Boolean.FALSE);
 		configuration.save(configurationFile);
 	    }
 
@@ -106,7 +106,7 @@ public class Metrics {
 	try {
 	    Class.forName("mineshafter.MineServer");
 	    return true;
-	} catch (final Exception e) {
+    } catch (final Exception ignored) {
 	}
 	return false;
     }
@@ -115,18 +115,13 @@ public class Metrics {
 	synchronized (optOutLock) {
 	    try {
 		configuration.load(getConfigFile());
-	    } catch (final IOException ex) {
-		if (debug) {
-		    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
-		}
-		return true;
-	    } catch (final InvalidConfigurationException ex) {
+        } catch (final IOException | InvalidConfigurationException ex) {
 		if (debug) {
 		    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 		}
 		return true;
 	    }
-	    return configuration.getBoolean("opt-out", false);
+        return configuration.getBoolean("opt-out", false);
 	}
     }
 
@@ -166,8 +161,8 @@ public class Metrics {
 	if (isPing) {
 	    encodeDataPair(data, "ping", "true");
 	}
-
-	final URL url = new URL("http://mcstats.org" + String.format("/report/%s", new Object[] { encode(pluginName) }));
+    
+        final URL url = new URL("http://mcstats.org" + String.format("/report/%s", encode(pluginName)));
 	URLConnection connection;
 	if (isMineshafterPresent()) {
 	    connection = url.openConnection(Proxy.NO_PROXY);

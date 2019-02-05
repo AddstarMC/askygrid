@@ -1,19 +1,19 @@
-/*******************************************************************************
- * This file is part of ASkyBlock.
- *
- *     ASkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
+/******************************************************************************
+ This file is part of ASkyBlock.
+ 
+ ASkyBlock is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ ASkyBlock is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.wasteofplastic.askygrid.panels;
 
 import java.util.ArrayList;
@@ -37,7 +37,6 @@ public class CPItem {
     private String nextSection;
 
     /**
-     * @param item
      * @param material
      * @param name
      * @param command
@@ -49,7 +48,7 @@ public class CPItem {
 	item = new ItemStack(material);
 	ItemMeta meta = item.getItemMeta();
 	// Handle multi line names (split by |)
-	List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
+		List<String> desc = new ArrayList<>(Arrays.asList(name.split("\\|")));
 	meta.setDisplayName(desc.get(0));
 	if (desc.size() > 1) {
 	    desc.remove(0); // Remove the name
@@ -64,7 +63,7 @@ public class CPItem {
 	this.item = itemStack;
 	ItemMeta meta = item.getItemMeta();
 	// Handle multi line names (split by |)
-	List<String> desc = new ArrayList<String>(Arrays.asList(name.split("\\|")));
+		List<String> desc = new ArrayList<>(Arrays.asList(name.split("\\|")));
 	meta.setDisplayName(desc.get(0));
 	if (desc.size() > 1) {
 	    desc.remove(0); // Remove the name
